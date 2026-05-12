@@ -1,4 +1,4 @@
-# Email_sender
+# Email-sender
 Sends emails to specified recipients using a Gmail account using SMTP.
 
 ## Usage
