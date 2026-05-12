@@ -21,7 +21,7 @@ def message_template(date, title, content):
     message = email.message.EmailMessage()
     weekday = dow(date)
     message['Subject'] = f"{title}"
-    message['Reply-To'] = 'no-reply@villalytics.com' 
+    message['Reply-To'] = 'no-reply@noreply.com' 
     message.set_content(f'Today\'s date: {weekday}\n\n{content}')
     return message
 
