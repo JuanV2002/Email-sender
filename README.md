@@ -3,15 +3,15 @@ Sends emails to specified recipients using a Gmail account using SMTP.
 
 ## Usage
 ```bash
-./send_email.py "date|title|emails|filepath"           # for .txt files
-./send_email.py "date|title|emails|filepath|row"       # for .csv files
+./send_email.py "date|title|emails|filepath|attachmentpath"           # for .txt files
+./send_email.py "date|title|emails|filepath|row|attachmentpath"       # for .csv files
 ```
 
 ## Arguments
 
 * **date**
     * Date to display in the email body
-    * Format: `dd/mm/yyyy` (e.g. `05/11/2026`)
+    * Format: `yyyy/mm/dd` (e.g. `2026/05/11`)
 * **title**
     * Title of the email
 * **emails**
@@ -23,6 +23,8 @@ Sends emails to specified recipients using a Gmail account using SMTP.
 * **row** *(csv only)*
     * Row number to pull content from under the `content` column
     * Zero-indexed (e.g. `0` = first data row, `1` = second data row)
+* **attachmentpath**
+    * Path to the pdf file you want to attach, must be a PDF file
 
 ## Credentials
 You will be prompted for credentials each time the script runs:
