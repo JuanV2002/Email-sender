@@ -6,15 +6,16 @@ import smtplib
 import sys
 import csv
 import getpass
-
+import os
 
 def usage():
-    print("Usage: script.py \"date|title|emails|filepath|row\"")
+    print("Usage: script.py \"date|title|emails|filepath|row|attachment\"")
     print("       row is only required for .csv files (0 = first data row)")
+    print("       attachment is optional, must be a .pdf file path")
     return True
 
 def dow(date):
-    dateobj = datetime.datetime.strptime(date, r"%d/%m/%Y")
+    dateobj = datetime.datetime.strptime(date, r"%Y-%m-%d").date()
     return dateobj
 
 def message_template(date, title, content):
@@ -25,12 +26,21 @@ def message_template(date, title, content):
     message.set_content(f'Today\'s date: {weekday}\n\n{content}')
     return message
 
-def send_message(message, emails):
+def send_message(message, emails, attachment_pdf_path):
     smtp = smtplib.SMTP_SSL('smtp.gmail.com', 465)
     sender = input('Insert your email: ')
     password = getpass.getpass('Insert your password: ')
     smtp.login(sender, password)
     message['From'] = sender
+
+    if attachment_pdf_path:
+        with open(attachment_pdf_path, 'rb') as f:
+            message.add_attachment(
+                f.read(),
+                maintype='application',
+                subtype='pdf',
+                filename=os.path.basename(attachment_pdf_path)
+            )
     for addr in emails.split(','):
         del message['To']
         message['To'] = addr
@@ -64,9 +74,13 @@ def main():
 
         if len(parts) == 4:
             date, title, emails, filepath = parts
-            row_index = None                        # no row needed for txt
+            row_index, attachment_pdf_path = None, None                        # no row needed for txt
         elif len(parts) == 5:
             date, title, emails, filepath, row = parts
+            row_index = int(row)                    # convert row to integer
+            attachment_pdf_path = None
+        elif len(parts) == 6:
+            date, title, emails, filepath, row, attachment_pdf_path = parts
             row_index = int(row)                    # convert row to integer
         else:
             print("Error: incorrect number of arguments", file=sys.stderr)
@@ -74,7 +88,7 @@ def main():
 
         content = read_content(filepath, row_index)
         message = message_template(date, title, content)
-        send_message(message, emails)
+        send_message(message, emails, attachment_pdf_path)
         print('Successfully sent reminders to:', emails)
 
     except FileNotFoundError:
